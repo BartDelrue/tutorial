@@ -1,0 +1,100 @@
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="js/btstrp.js"></script>
+
+
+<script src="js/three.min.js"></script>
+<script src="js/three.js-master/examples/js/loaders/ColladaLoader.js"></script>
+
+
+<div id="container" style="height: 100%; width: 100%"></div>
+<script>
+
+        var $container;
+
+        var camera, scene, renderer;
+        var dae;
+
+        var loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+
+        //https://clara.io/view/1635c5ca-505a-46f1-bfe2-471965db8efe#
+        loader.load( './img/collada/plant.dae', function ( collada ) {
+
+            dae = collada.scene;
+
+            dae.scale.x = dae.scale.y = dae.scale.z = 0.2;
+            dae.updateMatrix();
+            dae.rotation.y = 8;
+
+            dae.name = "test";
+
+            init();
+            animate();
+
+        } );
+
+        function init() {
+
+            $container = $("#container");
+
+            camera = new THREE.PerspectiveCamera( 45,$container.width() / $container.height(), 1, 2000 );
+            camera.position.set( 10, 5, 10 );
+            camera.lookAt(dae.position);
+
+            scene = new THREE.Scene();
+            scene.add( dae );
+
+            // Lights
+
+            var pointLight = new THREE.PointLight(0xffffff,0.8);
+            pointLight.position.x = 3;
+            pointLight.position.y = 1;
+            pointLight.position.z = 3;
+            pointLight.lookAt(dae.position);
+            scene.add(pointLight);
+
+            var ambilight = new THREE.AmbientLight(0xffffff,0.4);
+            scene.add(ambilight);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio( window.devicePixelRatio );
+            renderer.setSize( $container.width(), $container.height() );
+            $container.append( renderer.domElement );
+
+            window.addEventListener( 'resize', onWindowResize, false );
+        }
+
+        function onWindowResize() {
+
+            camera.aspect = $container.width() / $container.height();
+            camera.updateProjectionMatrix();
+            renderer.setSize( $container.width(), $container.height() );
+        }
+
+        var t = 0;
+        function animate() {
+            requestAnimationFrame( animate );
+            t += 0.01;
+            r = 0.01;
+
+            dae.rotation.y += r;
+//            dae.position.x = 7*Math.cos(t) + 0;
+//            dae.position.z = 13*Math.cos(t) + 0;
+//            dae.position.y = 5*Math.sin(t) + 0;
+
+
+            if (t >=2){
+                console.log(t);
+                var o = scene.children[0];
+                scene.remove( o );
+            }
+
+            renderer.render( scene, camera );
+        }
+
+</script>

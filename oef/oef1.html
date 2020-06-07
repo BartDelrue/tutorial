@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>three.js webgl</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body{
+            margin: 0;
+            padding:0;
+            font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif;
+        }
+
+        #values{
+            height: 250px;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 15px;
+        }
+    </style>
+    <script src="../js/three.js-master/build/three.min.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-2.2.1.min.js"
+            integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div id="container"></div>
+
+
+<script>
+
+    // omgeving instellen
+    var $container = $('#container');
+
+    var WIDTH = $(window).width(),
+            HEIGHT = $(window).height();
+
+    var VIEW_ANGLE = 45,
+            ASPECT = WIDTH/HEIGHT,
+            NEAR = 0.1,
+            FAR = 10000;
+
+    var renderer = new THREE.WebGLRenderer();
+    var camera = new THREE.PerspectiveCamera(VIEW_ANGLE,ASPECT,NEAR,FAR);
+    var scene = new THREE.Scene();
+
+    scene.add(camera);
+    camera.position.z = 300;
+    renderer.setSize(WIDTH,HEIGHT);
+
+    $container.append(renderer.domElement);
+
+    //obejct aanmaken
+    var radius = 60, segments = 16, rings = 16;
+    var sphereGeometry = new THREE.SphereGeometry(radius,segments,rings);
+
+    var materialParameters = {
+        color:0xffee55,
+        reflectivity: 1
+    };
+
+    var sphereMaterial = new THREE.MeshLambertMaterial(materialParameters);
+    var sphere = new THREE.Mesh(sphereGeometry,sphereMaterial);
+
+    scene.add(sphere);
+
+    //lights
+    var pointLight = new THREE.PointLight(0xffffff);
+    pointLight.position.x = 10;
+    pointLight.position.y = 50;
+    pointLight.position.z = 130;
+    scene.add(pointLight);
+
+    //slot
+    renderer.render(scene, camera);
+
+</script>
+
+</body>
+</html>

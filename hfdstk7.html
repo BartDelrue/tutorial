@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<link href="css/style.css" rel="stylesheet">-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>-->
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <!--<script src="js/btstrp.js"></script>-->
+
+    <!--<script src="js/three.min.js"></script>-->
+    <!--<script src="./js/three.js-master/examples/js/controls/OrbitControls.js"></script>-->
+    <!--<script src="./js/three.js-master/examples/js/controls/DeviceOrientationControls.js"></script>-->
+    <!--<script src="./js/three.js-master/examples/js/effects/CardboardEffect.js"></script>-->
+</head>
+<body>
+
+<h1>Oefening: cardboard panorama</h1>
+
+<p>We zullen voor het eerst werken met het cardboard effect. <br>
+Begin eerst met een panorama te maken zoals we al gezien hebben. Kies zelf tussen equirectangular of cubemap.</p>
+<p>Hier zijn enkele richtlijnen waarmee de rest van de oefening vlotter zal verlopen.<br>
+Deze oefening zal wat zelfstandig puzzelwerk vragen, gebruik de bronnen onderaan deze oefening.</p>
+<ul>
+    <li>three.js-master/examples/js/controls/OrbitControls.js</li>
+    <li>three.js-master/examples/js/controls/DeviceOrientationControls.js</li>
+    <li>three.js-master/examples/js/effects/CardboardEffect.js</li>
+    <li>zorg voor een echte container div, gebruik niet gewoon de body</li>
+    <li>zorg voor een animate functie</li>
+    <li>gebruik de orbitcontrols om te testen</li>
+</ul>
+<p>Een kleine tip wat betreft de css:</p>
+<blockquote>
+  <pre>
+    <code>
+        body {
+        margin: 0px;
+        overflow: hidden;
+        }
+        #container{
+        height: 100vh;
+        margin:0;
+        padding:0;
+        }
+        </code>
+      </pre>
+    </blockquote>
+<h2>CardboardEffect</h2>
+<p>Op het web zal je nog veel voorbeelden die gebruikmaken van StereoEffect<br>
+CardboardEffect is sterk gelijkaardig maar zorgt voor een aanzienlijke verbetering door toevoeging van de typische 'kijkgaten'.</p>
+
+<blockquote>
+  <pre>
+    <code>
+        var effect = new THREE.CardboardEffect( renderer );
+        effect.setSize( WIDTH, HEIGHT );
+    </code>
+      </pre>
+</blockquote>
+
+<p>Opgelet! Renderen gebeurt niet langer via de renderer maar via ons effect.<br>
+    De animate functie ziet er bijvoorbeeld zo uit:
+</p>
+<blockquote>
+  <pre>
+    <code>
+        function animate(){
+            window.requestAnimationFrame( animate );
+            controls.update();
+            effect.render(scene, camera);
+        }
+
+        animate();
+    </code>
+      </pre>
+</blockquote>
+
+<p>Op dit punt zou je al een werkend cardboard panorama moeten bekomen.</p>
+
+<h2>Fullscreen</h2>
+<p>Fullscreen mode vereist twee functies en een kleine aanpassing aan de orbitControls. <br>
+Het is belangrijk om ook het renderer.domElement als parameter mee te geven aan de orbitControls.</p>
+
+<blockquote>
+  <pre>
+    <code>
+        var element = renderer.domElement;
+        $container.append(element);
+
+        var controls = new THREE.OrbitControls( camera, element );
+
+        // fullscreen display
+
+        function fullscreen(){
+            if ( container.requestFullscreen )
+                container.requestFullscreen();
+            else if ( container.msRequestFullscreen )
+                container.msRequestFullscreen();
+            else if ( container.mozRequestFullScreen )
+                container.mozRequestFullScreen();
+            else if ( container.webkitRequestFullscreen )
+                container.webkitRequestFullscreen();
+        }
+
+        container.addEventListener('click', fullscreen, false);
+
+        // resize output, deze functie komt heel vaak van pas
+
+        function onWindowResize() {
+            camera.aspect = $container.innerWidth / $container.innerHeight;
+            camera.updateProjectionMatrix();
+
+            //we passen zowel de renderer als het effect aan!
+
+            renderer.setSize($container.innerWidth, $container.innerHeight);
+            effect.setSize( $container.innerWidth ,$container.innerHeight );
+        }
+
+        window.addEventListener( 'resize', onWindowResize, false );
+    </code>
+      </pre>
+</blockquote>
+
+<p>Nu zou je een werkend cardboard panorama moeten hebben. Zorg zelf voor de nodige aanpassingen om te werken met de deviceOrientationControls.</p>
+
+<h2>Uitbreiding</h2>
+<p>Pas de code aan zodat deviceOrientationControls gebruikt worden indien beschikbaar en orbitControls indien niet.<br>
+</p>
+
+<a href="demos/hfdstk7.html" target="_blank">
+<div id="container" style="height: 400px; width: 100%; border-radius: 5px; border:5px solid black;
+    background-image: url('./img/hfdstk7.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: black;"></div></a>
+
+<h3>Bronnen</h3>
+<span class="citation">Chrome Experiments for Virtual Reality. (z.d.). Geraadpleegd 17 april 2016, van <a href="https://vr.chromeexperiments.com/" target="_blank">https://vr.chromeexperiments.com/</a></span>
+<span class="citation">Bringing VR to the Web with Google Cardboard and Three.js. (z.d.). Geraadpleegd 17 april 2016, van <a href="https://www.sitepoint.com/bringing-vr-to-web-google-cardboard-three-js/" target="_blank">https://www.sitepoint.com/bringing-vr-to-web-google-cardboard-three-js/</a></span>
+</body>
+</html>

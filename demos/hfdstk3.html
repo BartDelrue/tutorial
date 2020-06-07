@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="../js/btstrp.js"></script>
+    <script src="../js/three.min.js"></script>
+
+    <style>
+        body {
+            margin: 0px;
+            overflow: hidden;
+        }
+        #container{
+            height: 100vh;
+            margin:0;
+            padding:0;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div id="container"></div>
+
+<script>
+    // zorg voor een container div (of gebruik de volledige body)
+
+    var $container = $('#container');
+    var WIDTH = $container.width(),
+            HEIGHT = $container.height();
+
+    // variabelen
+
+    var scene, camera, renderer, light;
+
+    var FOV = 45,
+            ASPECT = WIDTH/HEIGHT,
+            NEAR = 0.1,
+            FAR = 10000;
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(FOV,ASPECT,NEAR,FAR);
+    scene.add(camera);
+    camera.position.z = 300;
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(WIDTH,HEIGHT);
+
+    $container.append(renderer.domElement);
+
+    // licht
+
+    light = new THREE.PointLight(0xffffff);
+    light.position.x = 10;
+    light.position.y = 50;
+    light.position.z = 130;
+
+    scene.add(light);
+
+    //object variabelen
+
+    var sphere;
+    var radius = 60, segments = 36, rings = 36; // het aantal segments en rings hebben invloed op de kwaliteit, maar ook op de snelheid!
+    var sphereGeometry = new THREE.SphereGeometry(radius,segments,rings);
+
+    // NIEUW! TextureLoader()
+
+    var loader = new THREE.TextureLoader();
+
+    // we spreken de .load functie aan en bepalen een callback functie waarin we ons object aanmaken
+    // bij een bol gebruik je bij voorkeur een equirectangular image
+
+    loader.load('../js/three.js-master/examples/textures/land_ocean_ice_cloud_2048.jpg',
+            function ( texture ) {
+
+                // weet je nog welke andere materials beschibaar zijn?
+                // let goed op de parameters, we moeten de texture meegeven
+
+                var MeshPhongMaterial = new THREE.MeshPhongMaterial( {map: texture} );
+
+                sphere = new THREE.Mesh( sphereGeometry, MeshPhongMaterial );
+                sphere.position.x = 0;
+                sphere.position.y = 10;
+                sphere.position.z = 10;
+
+                scene.add( sphere );
+
+                // laatste stap: renderen!
+
+                renderer.render(scene, camera);
+            }
+    );
+
+    window.addEventListener( 'resize', onWindowResize, false );
+
+    function onWindowResize() {
+
+        camera.aspect = $container.width() / $container.height();
+        camera.updateProjectionMatrix();
+        renderer.setSize( $container.width(), $container.height() );
+        renderer.render( scene, camera );
+    }
+
+</script>
+
+</body>
+</html>

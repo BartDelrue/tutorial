@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<link href="css/style.css" rel="stylesheet">-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>-->
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <!--<script src="js/btstrp.js"></script>-->
+
+    <!--<script src="js/three.min.js"></script>-->
+
+</head>
+<body>
+<h1>Oefening</h1>
+
+<p>
+In deze oefening herhalen we alles wat we tot nu toe geleerd hebben. Textures toepassen op een kubus zal wellicht wat opzoekingswerk vragen.<br>
+    We zorgen er voor dat de gebruiker ons object, de camera en het licht zelf kan positioneren.<br>
+    Maak zelf een variant op onderstaande demo.
+</p>
+<p>    <i>Kleine tip, three.js werkt met radialen.</i></p>
+<p><b>Succes!</b></p>
+
+<div id="container" style="height: 400px; width: 100%; border-radius: 5px; border:5px solid black"></div>
+<div id="values" class="row" style="margin-top:30px;">
+    <div class="col-sm-4"><span>Light</span><br>
+        <span id="lightCoordinates"></span><br>
+        <label for="lightX" id="rangeLabellightX">X-as</label>
+        <input id="lightX" type="range" class="slider" value="50" onchange="lightXChange()" oninput="lightXChange()"><br>
+        <label for="lightY" id="rangeLabellightY">Y-as</label>
+        <input id="lightY" type="range" class="slider" value="50" onchange="lightYChange()" oninput="lightYChange()"><br>
+        <label for="lightZ" id="rangeLabellightZ">Z-as</label>
+        <input id="lightZ" type="range" class="slider" value="50" onchange="lightZChange()" oninput="lightZChange()"><br></div>
+    <div class="col-sm-4"><span>Cube</span><br>
+        <span id="cubeCoordinates"></span><br>
+        <label for="cubeX" id="rangeLabelcubeX">X-as</label>
+        <input id="cubeX" type="range" class="slider" value="50" onchange="cubeXChange()" oninput="cubeXChange()"><br>
+        <label for="cubeY" id="rangeLabelcubeY">Y-as</label>
+        <input id="cubeY" type="range" class="slider" value="50" onchange="cubeYChange()" oninput="cubeYChange()"><br>
+        <label for="cubeZ" id="rangeLabelcubeZ">Z-as</label>
+        <input id="cubeZ" type="range" class="slider" value="50" onchange="cubeZChange()" oninput="cubeZChange()"><br></div>
+    <div class="col-sm-4"><span>Camera rotation</span><br>
+        <span id="cameraRotation"></span><br>
+        <label for="cameraX" id="rangeLabelcameraX">X-as</label>
+        <input id="cameraX" type="range" class="slider" value="0" onchange="cameraXChange()" oninput="cameraXChange()"><br>
+        <label for="cameraY" id="rangeLabelcameraY">Y-as</label>
+        <input id="cameraY" type="range" class="slider" value="0" onchange="cameraYChange()" oninput="cameraYChange()"><br>
+        <label for="cameraZ" id="rangeLabelcameraZ">Z-as</label>
+        <input id="cameraZ" type="range" class="slider" value="0" onchange="cameraZChange()" oninput="cameraZChange()"><br></div>
+</div>
+
+<script>
+
+    // omgeving instellen
+    var $container = $('#container');
+    var WIDTH = $container.width(),
+            HEIGHT = $container.height();
+
+    var VIEW_ANGLE = 45,
+            ASPECT = WIDTH/HEIGHT,
+            NEAR = 0.1,
+            FAR = 10000;
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    var camera = new THREE.PerspectiveCamera(VIEW_ANGLE,ASPECT,NEAR,FAR);
+    var scene = new THREE.Scene();
+
+    scene.add(camera);
+    camera.position.z = 300;
+    renderer.setSize(WIDTH,HEIGHT);
+
+    $container.append(renderer.domElement);
+
+    //obejct aanmaken
+    var textureLoader = new THREE.TextureLoader();
+
+    var texture0 = textureLoader.load( './img/logo.png' );
+    var texture1 = textureLoader.load( './img/text.png' );
+
+    var materials = [
+        new THREE.MeshLambertMaterial( { map: texture0} ),
+        new THREE.MeshLambertMaterial( { map: texture0} ),
+        new THREE.MeshLambertMaterial( { map: texture0} ),
+        new THREE.MeshLambertMaterial( { map: texture0} ),
+        new THREE.MeshLambertMaterial( { map: texture1} ),
+        new THREE.MeshLambertMaterial( { map: texture0} )
+    ];
+
+    var meshFaceMaterial = new THREE.MeshFaceMaterial( materials );
+
+    var cubeGeometry = new THREE.BoxGeometry(100, 100, 100);
+    var cube = new THREE.Mesh(cubeGeometry,meshFaceMaterial);
+
+    scene.add(cube);
+    cube.position.x = ($('#cubeX').val() - 50) * 10;
+    cube.position.y = ($('#cubeY').val() - 50) * 10;
+    cube.position.z = ($('#cubeZ').val() - 70) * 10;
+    cube.rotation.x = 0.5;
+    cube.rotation.y = 0.2;
+    cube.rotation.z = 0.5;
+
+
+    //lights
+    var pointLight = new THREE.PointLight(0xffffff);
+    pointLight.position.x = ($('#lightX').val() - 50) * 10;
+    pointLight.position.y = ($('#lightY').val() - 50) * 10;
+    pointLight.position.z = ($('#lightZ').val() - 50) * 20;
+
+    scene.add(pointLight);
+
+    var ambiLight = new THREE.AmbientLight(0xffffff,0.2);
+    scene.add(ambiLight);
+
+    //slot
+    animate();
+
+    function animate(){
+        id = requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+
+    window.addEventListener( 'resize', onWindowResize, false );
+
+    function onWindowResize() {
+        camera.aspect = $container.width() / $container.height();
+        camera.updateProjectionMatrix();
+        renderer.setSize( $container.width(), $container.height() );
+        renderer.render( scene, camera );
+    }
+
+</script>
+
+<script>
+    function cubeXChange(){
+        cube.position.x = ($('#cubeX').val() - 50) * 10;
+        renderer.render(scene, camera);
+        $('#cubeCoordinates').html(JSON.stringify(cube.position));
+    }
+    function cubeYChange(){
+        cube.position.y = ($('#cubeY').val() - 50) * 10;
+        renderer.render(scene, camera);
+        $('#cubeCoordinates').html(JSON.stringify(cube.position));
+    }
+    function cubeZChange(){
+        cube.position.z = ($('#cubeZ').val() - 70) * 10;
+        renderer.render(scene, camera);
+        $('#cubeCoordinates').html(JSON.stringify(cube.position));
+    }
+
+    function lightXChange(){
+        pointLight.position.x = ($('#lightX').val() - 50) * 10;
+        renderer.render(scene, camera);
+        $('#lightCoordinates').html(JSON.stringify(pointLight.position));
+    }
+    function lightYChange(){
+        pointLight.position.y = ($('#lightY').val() - 50) * 10;
+        renderer.render(scene, camera);
+        $('#lightCoordinates').html(JSON.stringify(pointLight.position));
+    }
+    function lightZChange(){
+        pointLight.position.z = ($('#lightZ').val() - 50) * 20;
+        renderer.render(scene, camera);
+        $('#lightCoordinates').html(JSON.stringify(pointLight.position));
+    }
+
+    function cameraXChange(){
+        camera.rotation.x = ($('#cameraX').val()*3.6) * Math.PI / 180;
+        renderer.render(scene, camera);
+        $('#cameraRotation').html(JSON.stringify(camera.rotation));
+    }
+    function cameraYChange(){
+        camera.rotation.y = ($('#cameraY').val()*3.6) * Math.PI / 180;
+        renderer.render(scene, camera);
+        $('#cameraRotation').html(JSON.stringify(camera.rotation));
+    }
+    function cameraZChange(){
+        camera.rotation.z = ($('#cameraZ').val()*3.6) * Math.PI / 180;
+        renderer.render(scene, camera);
+        $('#cameraRotation').html(JSON.stringify(camera.rotation));
+    }
+
+</script>
+
+<h3>Bronnen</h3>
+<span class="citation">WebGL geometry cube. (z.d.) Geraadpleegd op 22 april 2016, vann <a href="https://threejs.org/examples/#webgl_geometry_cube" target="_blank">https://threejs.org/examples/#webgl_geometry_cube</a></span>
+
+</body>
+</html>

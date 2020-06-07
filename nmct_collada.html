@@ -1,0 +1,108 @@
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="js/btstrp.js"></script>
+
+
+<script src="js/three.min.js"></script>
+<script src="js/three.js-master/examples/js/loaders/ColladaLoader.js"></script>
+
+
+<div id="container" style="height: 100%; width: 100%"></div>
+<script>
+
+        var $container;
+
+        var camera, scene, renderer;
+        var scherm, lessenaar;
+
+        var loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+
+        loader.load( './img/collada/20160423-paneel.dae', function ( collada ) {
+
+            scherm = collada.scene;
+
+            scherm.scale.x = scherm.scale.y = scherm.scale.z = 8;
+            scherm.updateMatrix();
+
+
+
+                loader.load( './img/collada/20160423-lessenaar.dae', function ( collada ) {
+
+                    lessenaar = collada.scene;
+
+                    lessenaar.scale.x = lessenaar.scale.y = lessenaar.scale.z = 8;
+                    lessenaar.position.z = 15;
+                    lessenaar.updateMatrix();
+
+                    init();
+                    animate();
+
+                } );
+
+
+
+
+        } );
+
+
+
+
+
+
+        function init() {
+
+            $container = $("#container");
+
+            camera = new THREE.PerspectiveCamera( 45,$container.width() / $container.height(), 1, 2000 );
+            camera.position.set( 0, 25, 75 );
+            camera.lookAt(lessenaar.position);
+
+            scene = new THREE.Scene();
+            scene.add( lessenaar );
+            scene.add(scherm);
+
+
+            // Lights
+
+            var pointLight = new THREE.PointLight(0xffffff,0.2);
+            pointLight.position.x = 20;
+            pointLight.position.y = 0;
+            pointLight.position.z = 100;
+            pointLight.lookAt(scherm.position);
+            scene.add(pointLight);
+
+            var ambilight = new THREE.AmbientLight(0xffffff,0.4);
+            scene.add(ambilight);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio( window.devicePixelRatio );
+            renderer.setSize( $container.width(), $container.height() );
+            $container.append( renderer.domElement );
+
+            window.addEventListener( 'resize', onWindowResize, false );
+        }
+
+        function onWindowResize() {
+
+            camera.aspect = $container.width() / $container.height();
+            camera.updateProjectionMatrix();
+            renderer.setSize( $container.width(), $container.height() );
+        }
+
+
+
+        var t = 0;
+        function animate() {
+            requestAnimationFrame( animate );
+
+            lessenaar.rotation.y += 0.01;
+            renderer.render( scene, camera );
+        }
+
+
+</script>

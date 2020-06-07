@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
+
+    <title>Google Cardboard tutorial</title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <script src="js/btstrp.js"></script>
+
+    <script src="./js/three.min.js"></script>
+    <script src="./js/three.js-master/examples/js/controls/OrbitControls.js"></script>
+    <script src="./js/three.js-master/examples/js/loaders/ColladaLoader.js"></script>
+    <script src="./js/three.js-master/examples/js/controls/DeviceOrientationControls.js"></script>
+    <script src="./js/three.js-master/examples/js/effects/CardboardEffect.js"></script>
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+<nav class="navbar nav-custom navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand page-scroll" href="#page-top">Home</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+            <ul class="nav navbar-nav">
+                <li class="hidden">
+                    <a class="page-scroll" href="#page-top"></a>
+                </li>
+                <li class="">
+                    <a class="page-scroll" href="#tutorial">Tutorial</a>
+                </li>
+                <li class="">
+                    <a class="page-scroll" href="#demos">Demo's</a>
+                </li>
+                <li class="">
+                    <a class="page-scroll" href="#about">Over ons</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header class="intro">
+    <div class="intro-body">
+        <div class="container extraPadding">
+            <div class="row">
+                <div class="col-md-4 introTitel">
+                    <h1>Three.js</h1>
+                    <h1>Google cardboard</h1>
+                    <h1>Tutorial</h1>
+                    <svg width="75px" height="75px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                            <g id="cardboard" sketch:type="MSArtboardGroup">
+                                <path d="M20.6364972,6 L3.19864407,6 C2.54824859,6 2,6.56836937 2,7.26931532 L2,17.7111261 C2,18.4120721 2.54824859,18.9803243 3.22463277,18.9803243 L7.9880226,18.9803243 C8.49875706,18.9803243 8.93649718,18.6564955 9.12045198,18.195991 L10.5055367,14.7287387 C10.739096,14.1440901 11.2949153,13.7327748 11.9435028,13.7327748 C12.5920904,13.7327748 13.1479096,14.1440901 13.3814689,14.7287387 L14.7665537,18.195991 C14.9505085,18.6564955 15.3882486,18.9803243 15.8729944,18.9803243 L20.6364972,18.9803243 C21.3387571,18.9803243 21.8870056,18.4120721 21.8870056,17.7111261 L21.8870056,7.26931532 C21.8870056,6.56836937 21.3387571,6 20.6364972,6 L20.6364972,6 Z M7.43310734,14.7744144 C6.21468927,14.7744144 5.22813559,13.7523333 5.22813559,12.4901622 C5.22813559,11.227991 6.21468927,10.206027 7.43310734,10.206027 C8.65141243,10.206027 9.6359322,11.227991 9.6359322,12.4901622 C9.6359322,13.7523333 8.64926554,14.7744144 7.43310734,14.7744144 L7.43310734,14.7744144 Z M16.4550282,14.7733604 C15.2372881,14.7733604 14.2510734,13.7517477 14.2510734,12.4901622 C14.2510734,11.2286937 15.2372881,10.2070811 16.4550282,10.2070811 C17.6727684,10.2070811 18.6589831,11.2286937 18.6589831,12.4901622 C18.6589831,13.7517477 17.6727684,14.7733604 16.4550282,14.7733604 L16.4550282,14.7733604 Z" id="Imported-Layers" fill="#000000" sketch:type="MSShapeGroup"></path>
+                                <g id="Oval-2-+-Imported-Layers" sketch:type="MSLayerGroup" transform="translate(18.000000, 20.000000)"></g>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="col-md-8 tiles">
+                    <a class="page-scroll" href="#tutorial">
+                    <div>
+                        <h2>Tutorial</h2>
+                        <p>Leer google cardboard toepassingen maken met three.js</p>
+                    </div></a>
+                    <a class="page-scroll" href="#demos">
+                    <div>
+                        <h2>Demo's</h2>
+                        <p>Bekijk enkele voorbeelden </p>
+                    </div></a>
+                        <a class="page-scroll" href="#about">
+                    <div>
+                        <h2>Over ons</h2>
+                        <p>Wij zijn twee studenten NMCT, ontdek meer over ons.</p>
+                    </div></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="tutorial" class="container-fluid toplevelSection">
+    <article class="row white">
+        <nav class="menu noPadding">
+            <h2>Onderdelen</h2>
+            <ul id="links">
+                <li><a  id="1" class="page-scroll active" href="#tutorialsContent">voor we beginnen</a></li>
+                <li><a  id="2" class="page-scroll" href="#tutorialsContent">scene - renderer - camera - lights</a></li>
+                <li><a  id="3" class="page-scroll" href="#tutorialsContent">textures</a></li>
+                <li><a  id="4" class="page-scroll" href="#tutorialsContent">oefening: nmct cube</a></li>
+                <li><a  id="5" class="page-scroll" href="#tutorialsContent">equirectangular panorama - mouse control</a></li>
+                <li><a  id="6" class="page-scroll" href="#tutorialsContent">equirectangular panorama - device orientation</a></li>
+                <li><a  id="7" class="page-scroll" href="#tutorialsContent">oefening: cardboard panorama</a></li>
+                <li><a  id="8" class="page-scroll" href="#tutorialsContent">objecten importeren en animeren</a></li>
+                <li><a  id="9" class="page-scroll" href="#tutorialsContent">cardboard menu</a></li>
+                <li><a  id="10" class="page-scroll" href="#tutorialsContent">samenvattende oefening</a></li>
+            </ul>
+
+        </nav>
+        <script>var id;</script>
+        <section id="tutorialsContent">
+
+        </section>
+    </article>
+</section>
+
+<section id="demos" class=" toplevelSection">
+    <article class="container">
+        <h1>Demo's</h1>
+    </article>
+    <article class="container tiles">
+
+        <a href="demos/hfdstk4.html" style="background: url(./img/nmctcube.png);" target="_blank">
+        <div >
+            <h2>NMCTCube</h2>
+            <p>Positioneer object, licht en camera.</p>
+        </div></a>
+        <a href="demos/hfdstk5.html" style="background: url(./img/orbitcontrol.png);" target="_blank">
+        <div>
+            <h2>OrbitControls</h2>
+            <p>Equirectangular panorama met orbitControls.</p>
+        </div></a>
+        <a href="demos/hfdstk6.html" style="background: url(./img/orbitcontrol.png);" target="_blank">
+        <div>
+            <h2>DeviceOrientationControls</h2>
+            <p>Equirectangular panorama met deviceOrientationControls en orbitControls als fallback.</p>
+        </div></a>
+        <a href="demos/hfdstk7.html" style="background: url(./img/cardboardpanorama.png);" target="_blank">
+        <div>
+            <h2>Cardboard Panorama</h2>
+            <p>Een equirectangular panorama, inclusief device orientation controls en cardboard effect</p>
+        </div></a>
+        <a href="demos/hfdstk8.html" style="background: url(./img/collada.png);" target="_blank">
+        <div>
+            <h2>Importeren en animeren</h2>
+            <p>Een .dae bestand importeren en animeren.</p>
+        </div></a>
+        <a href="demos/hfdstk9.html" style="background: url(./img/hfdstk9.png);" target="_blank">
+        <div>
+            <h2>Cardboard menu</h2>
+            <p>Kleurrijke kubussen als menu-items om virtueel te reizen.</p>
+        </div></a>
+        <a href="demos/hfdstk10.html" style="background: url(./img/hfdstk10.png);" target="_blank">
+            <div>
+                <h2>Samenvattende oefening</h2>
+                <p>Deze laatste oefening bundelt eigenlijk alle voorgaande stappen.</p>
+            </div></a>
+</article>
+</section>
+
+<section id="about">
+
+    <div class="container">
+
+            <h1>Over ons</h1>
+
+        <article>
+            <h2 class="col-sm-12">Tijl Bulcaen</h2>
+            <div class="col-sm-2"><img class="img-responsive" src="./img/tijl_2.png"></div>
+
+            <article class="col-sm-10 extraMargin">
+                <p>Afgestudeerd als leraar wiskunde en informatica stelde Tijl vast dat de honger naar meer IT-kennis groot was.
+                    Gepassioneerd door bits en bytes ging hij dit buikgevoel stillen in de opleiding NMCT.</p>
+                <p>Telkens is hij op zoek naar uitdagingen! Vooral naar nieuwe manieren om te interageren met het internet.</p>
+                <p>Daarnaast is het een sociaal dier gekenmerkt door een stevige dosis enthousiasme en optimisme!</p>
+                <a href="https://www.facebook.com/tijl.bulcaen">Facebook</a> - <a href="https://twitter.com/TijlBulcaen">Twitter</a> - <a href="https://www.linkedin.com/in/tijl-bulcaen-412034a4"> LinkedIn</a>
+            </article>
+        </article>
+
+
+        <article>
+            <h2 class="col-sm-12">Bart Delrue</h2>
+            <div class="col-sm-2"><img class="img-responsive" src="./img/bart_2.png"></div>
+
+            <article class="col-sm-10 extraMargin">
+            <p>Toen de dieren nog spraken en Netscape nog de standaard was maakte Bart al zijn eerste websites in de lokale bibliotheek. <br>
+                Kladblok FTW!
+            </p>
+                <p>Op zijn zevenentwintigste besloot Bart die draad terug op te pikken en opnieuw voltijds te gaan studeren. <br>
+                    Sindsdien kan je hem op de <a href="http://www.nmct.be">NMCT-campus</a> al van ver gepassioneerd horen vertellen over de toekomst van mobile en web development.
+                </p>
+                <a href="http://bart.cf">Website</a> - <a href="https://www.facebook.com/bart.delrue.7?ref=bookmarks">Facebook</a> - <a href="https://twitter.com/mordicus_87">Twitter</a> - <a href="https://www.linkedin.com/in/bart-delrue-040672117"> LinkedIn</a>
+            </article>
+        </article>
+
+    </div>
+</section>
+
+
+<footer>
+    <section class="container-fluid">
+        <div class="row">
+            <article class="col-lg-8 col-lg-offset-2 text-center">
+                <p>Tutorial by Tijl Bulcaen & <a href="http://bart.cf">Bart Delrue</a> - NMCT 2015-2016</p>
+            </article>
+        </div>
+    </section>
+</footer>
+
+
+<script>
+
+    $("#tutorialsContent").load("hfdstk1.html");
+
+    $("#links").find("a").each(function(){
+
+        $(this).click(function(){
+
+            $("#links").find("a").each(function(){$(this).removeClass("active")});
+            $(this).addClass("active");
+
+
+            $("#tutorialsContent").load("hfdstk"+$(this).attr("id") + ".html");
+
+        })
+
+    });
+
+
+</script>
+
+</body>
+
+
+</html>

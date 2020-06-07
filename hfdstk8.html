@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<link href="css/style.css" rel="stylesheet">-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>-->
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <!--<script src="js/btstrp.js"></script>-->
+
+    <!--<script src="./js/three.min.js"></script>-->
+    <!--<script src="./js/three.js-master/examples/js/loaders/ColladaLoader.js"></script>-->
+
+</head>
+<body>
+<h1>Objecten importeren en animeren</h1>
+<p>Three.js beschikt over tal van Loaders om externe bestanden te importeren. Denk maar aan de textureLoader waarmee we al in contact kwamen!<br>
+Om 3D bestanden te importeren wordt meestal gebruik gemaakt van de <a href="https://threejs.org/docs/#Reference/Loaders/ColladaLoader" target="_blank">colladaLoader</a> (.dae bestanden) of de <a href="https://threejs.org/docs/#Reference/Loaders/JSONLoader" target="_blank">JSONLoader</a>. <br>
+We focussen hier op de colladaLoader omdat dit .dae formaat onder andere gebruikt wordt door SketchUp en Blender.</p>
+
+<p>Voor wie zoekt naar toffe objecten:</p>
+<ul>
+    <li><a href="https://3dwarehouse.sketchup.com/" target="_blank">3D Warehouse</a> </li>
+    <li><a href="https://clara.io/library" target="_blank">Clara.io</a> </li>
+    <li><a href="https://dae.cgtrader.com/" target="_blank">CGTrader</a> </li>
+</ul>
+
+<p>In dit voorbeeld gebruiken we <a href="https://clara.io/view/1635c5ca-505a-46f1-bfe2-471965db8efe#" target="_blank">https://clara.io/view/1635c5ca-505a-46f1-bfe2-471965db8efe#</a>.<br>
+We hebben het bestand wel aangepast in Blender zodat we zelf controle hebben over de lichtbron.</p>
+
+<h2>Objecten importeren</h2>
+
+<p>Zorg naar goede gewoonte voor een declaratie van alle variabelen.<br>
+    Deze keer zullen we het opzetten van onze scene uitvoeren binnen een init() functie. Die voeren we pas uit van zodra ons object geladen is.</p>
+<blockquote>
+  <pre>
+    <code>
+
+        var $container;
+        var camera, scene, renderer;
+        var pointLight, ambiLight;
+        var dae;
+
+        var loader = new THREE.ColladaLoader();
+
+        // ons assenstelsel heeft een andere orientatie
+
+        loader.options.convertUpAxis = true;
+
+        loader.load( 'starwars-tie-fighter.dae', function ( collada ) {
+
+            dae = collada.scene;
+
+            // indien nodig schalen we het object
+
+            dae.scale.x = dae.scale.y = dae.scale.z = 0.4;
+
+            init();
+            animate();
+        } );
+    </code>
+      </pre>
+</blockquote>
+<p>Werk nu de init() functie zelfstandig uit: opzetten van de renderer, scene, camera, lichten... <br>
+Vergeet niet om de dae variabele op de scene te zetten.</p>
+
+<h2>Animeren</h2>
+<p>Met een gezonde dosis wiskunde komen we al heel ver!<br>
+In dit voorbeeld laten we de tie-fighter in een ellips bewegen en roteren rond zijn eigen as.</p>
+
+<blockquote>
+  <pre>
+    <code>
+        var t = 0;
+        function animate() {
+            requestAnimationFrame( animate );
+            t += 0.01;
+
+            dae.rotation.y += 0.01;
+
+            dae.position.x = 7*Math.cos(t);
+            dae.position.z = 13*Math.cos(t);
+            dae.position.y = 5*Math.sin(t);
+
+            renderer.render( scene, camera );
+        }
+    </code>
+      </pre>
+</blockquote>
+
+<a href="demos/hfdstk8.html" target="_blank">
+<div id="container" style="height: 400px; width: 100%; border-radius: 5px; border:5px solid black;
+    background-image: url('./img/hfdstk8.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: black;"></div></a>
+
+</body>
+</html>

@@ -1,0 +1,414 @@
+body {
+    height: 100%;
+}
+
+html {
+    height: 100%;
+    overflow-x: hidden;
+}
+h1, h2, h3, h4, h5, h6, p, div {
+    font-family: 'lato', sans-serif;
+}
+h2{
+    padding: 30px 20px 20px 0;
+    margin-bottom: 40px;
+    border-bottom: 1px solid black;
+    box-sizing: border-box;
+    white-space: nowrap;
+    font-weight: 300;
+}
+h2 em{
+    border-bottom: 3px solid #193441;
+    padding-bottom:17px;
+    box-sizing:border-box;
+    font-style: inherit;
+    color: inherit;
+}
+
+h1{
+    font-size: 3em;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: left;
+    color: white;
+}
+
+#cardboard path{
+    fill:white;
+}
+p, li{
+    font-size: 1.2em;
+}
+
+a:hover, a:link, a:active, a:visited{
+    color: rgba(233,127,2,1);
+    text-decoration: none;
+    outline: 0;
+}
+
+.extraPadding{
+    padding-top:100px;
+    padding-bottom: 50px;
+}
+.introTitel{
+    padding-bottom:80px;
+}
+.tiles{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+}
+.tiles>a, .tiles>div{
+    padding:20px;
+    margin-bottom:20px;
+    background:rgba(200,200,255,0.2);
+    flex: 0 1 100%;
+    color: white;
+    -webkit-box-shadow: 1px 1px 3px -3px rgba(0,0,0,0.75);
+    -moz-box-shadow:    1px 1px 3px -3px rgba(0,0,0,0.75);
+    box-shadow:         1px 1px 3px -3px rgba(0,0,0,0.75);
+    -webkit-transition: all 0.2s;
+    transition: all 0.2s;
+}
+.tiles>a:hover{
+    background:rgba(200,200,255,0.3);
+    -webkit-box-shadow: 1px 1px 3px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow:    1px 1px 3px -1px rgba(0,0,0,0.75);
+    box-shadow:         1px 1px 3px -1px rgba(0,0,0,0.75);
+}
+
+.tiles h2{
+    margin:0;
+    border:none;
+    padding:0 0 10px 0;
+    font-size: 1.8em;
+    font-weight: 700;
+}
+
+.menu{
+    background: rgb(13,31,45);
+    color: white;
+    flex: 1 1 auto;
+}
+.menu, .menu *{
+    transition: all 0.2s;
+}
+
+.menu ul{
+    margin: 0;
+    padding: 0;
+}
+
+.menu li{
+    list-style: none;
+}
+
+.menu a{
+    padding: 15px 15px 15px 15px;
+    display: block;
+    border-left: 6px solid transparent;
+    transition: all 0.4s;
+    color: rgba(255,255,255,0.8);
+    white-space: nowrap;
+    font-size: 1.1em;
+    box-sizing: border-box;
+}
+
+.menu h2{
+    padding:30px;
+    margin:0;
+    display: block;
+    -webkit-box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow:    0px 2px 1px -1px rgba(0,0,0,0.75);
+    box-shadow:         0px 2px 1px -1px rgba(0,0,0,0.75);
+    background: rgba(255,255,255,0.1);
+    border-bottom: none;
+}
+
+.menu a:hover{
+    border-left: 6px solid rgba(233,127,2,1);
+    background: rgba(233,127,2,0.9);
+    -webkit-box-shadow: 1px 1px 3px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow:    1px 1px 3px -1px rgba(0,0,0,0.75);
+    box-shadow:         1px 1px 3px -1px rgba(0,0,0,0.75);
+    color: rgba(255,255,255,1);
+}
+
+.menu .active{
+    border-left: 6px solid rgba(233,127,2,1);
+}
+
+#tutorialsContent{
+    flex:5 1 355px;
+    margin: 0 75px;
+    padding-top: 25px;
+    box-sizing: border-box;
+    min-height: 100vh;
+    min-width: 255px;
+}
+
+.white{
+    background: white;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding-bottom: 0;
+}
+
+#demos{
+
+    background:     linear-gradient(
+            rgba(13,31,90,0.65),
+            rgba(13,31,90,0.65));
+    background:linear-gradient(
+                    rgba(13,31,90,0.65),
+                    rgba(13,31,90,0.65)
+    ),url(../img/demos-bg.png);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+
+}
+#demos, #about{
+    padding-top: 150px;
+    padding-bottom: 150px;
+}
+
+.btn{
+    background: transparent;
+    text-align: center;
+    padding: 5px;
+    margin-top: 50px;
+    -webkit-transition: background 1s;
+    transition: background 1s;
+    border-radius: 0;
+    text-transform: uppercase;
+    font-size: 0.8em;
+}
+
+.btn-default {
+    border: 1px solid #193441;
+    color: #193441;
+    background-color: transparent;
+}
+
+.btn-default:hover,
+.btn-default:focus {
+    border: 1px solid #193441;
+    outline: 0;
+    color: #193441;
+    background-color: rgba(1,1,1,0.2);;
+}
+
+#tutorialsContent h1{
+    color: black;
+    font-size: 3em;
+    font-weight: 300;
+    text-transform: uppercase;
+    text-align: left;
+    padding-top: 80px;
+    padding-bottom: 40px;
+}
+
+#about h1{
+    color:black;
+}
+
+
+.intro {
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    background:     linear-gradient(
+            rgba(13,31,90,0.65),
+            rgba(13,31,90,0.65)
+    ),url(../img/intro_tijl.png);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    display: table;
+}
+.intro-body {
+    display: table-cell;
+    vertical-align: middle;
+}
+.intro-text{
+    margin:30px 0;
+    font-size:1.4em;
+    font-family: 'Architects Daughter', cursive;
+}
+.intro em{
+
+    font-size: 1.6em;
+}
+.nav-custom{
+    background: rgba(13,31,45,0.4);
+    opacity: 0;
+}
+
+.nav-custom.top-nav-collapse {
+    background: white;
+}
+.nav-custom a{
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    -webkit-transition: all 0.2s;
+    transition:         all 0.2s;
+    font-weight: 600;
+}
+.nav-custom a:hover {
+    color:rgba(255,255,255,1);
+}
+
+.nav-custom .nav li a:hover {
+    outline: 0;
+    background-color: transparent;
+}
+
+.nav-custom .nav li a:focus,
+.nav-custom .nav li a:active{
+    outline: 0;
+    background-color: transparent;
+}
+
+
+
+@media(min-width:768px) {
+
+    .tiles{
+        justify-content: flex-start;
+    }
+
+    .tiles>a, .tiles>div{
+        flex: 1 1 280px;
+        margin:10px;
+    }
+
+    .nav-custom {
+        -webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
+        -moz-transition: background .5s ease-in-out,padding .5s ease-in-out;
+        transition: background .5s ease-in-out,padding .5s ease-in-out;
+    }
+    .nav-custom.top-nav-collapse {
+        padding: 0;
+        background: transparent;
+    }
+    .navbar .navbar-toggle .icon-bar {
+
+    }
+    /*.nav-custom a{*/
+        /*color:white;*/
+    /*}*/
+
+
+}
+.navbar-scroll{
+    background: rgba(13,31,45,0.95);
+    transition: 1s ease-in;
+    opacity: 1;
+}
+.navbar-scroll a{
+    color: white;
+}
+.navbar .navbar-toggle .icon-bar {
+    background-color: white;
+}
+.navbar-scroll .navbar-toggle .icon-bar {
+    background-color: white;
+}
+.navbar-fixed-top{
+    -webkit-backface-visibility: hidden;
+}
+
+article section, article{
+    padding-bottom:50px;
+}
+
+
+
+.full{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+.noPadding{
+    padding:0;
+}
+
+article img{
+    margin: 40px auto;
+    /*width: 32px;*/
+}
+
+#about img{
+border-radius: 50px;
+    max-height: 200px;
+}
+
+.extraMargin{
+    margin: 40px 0px;
+}
+
+.text-btn{
+    border: 2px solid #1D9B6C;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    font-weight: 700;
+    color: #1D9B6C;
+    padding: 5px 15px;
+    display: inline;
+}
+
+footer section{
+    background: #313131;
+    color: #F2F2F2;
+    font-size: 0.8em;
+    margin-top:20px;
+    padding-top: 50px;
+}
+
+.citation{
+    display: inline-block;
+    font-size: 0.8em;
+    color: rgba(0,0,0,0.8);
+}
+
+@media (max-width: 550px){
+    .col-xxs{
+        width:100%
+    }
+    #tutorialsContent{
+        margin:15px;
+    }
+    #tutorialsContent h1{
+        padding-top: 20px;
+    }
+}
+
+#demos .tiles *{
+    text-shadow: 0 0 4px #000;
+}
+
+@media print{
+
+    nav, header, .intro, #demos, #about, footer {
+    display: none;
+    }
+    section #tutorialsContent h1{
+        margin:0;!important;
+    }
+    section #tutorialsContent h2{
+        margin-top: 10px; !important;
+    }
+}
+

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+        body {
+            margin: 0px;
+            overflow: hidden;
+        }
+        #container{
+            height: 100vh;
+            width: 100%;
+            margin:0;
+            padding:0;
+            position:relative;
+        }
+
+        #menuSelector{
+            width: 50%;
+            height: 100vh;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #center {
+            background-color: transparent;
+            border: 4px whitesmoke solid;
+            z-index: 100;
+            border-radius: 60px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #centerPoint {
+            background-color: whitesmoke;
+            z-index: 100;
+            border-radius: 10px;
+            width: 10px;
+            height: 10px;
+        }
+
+        #info{
+            height: 4em;
+            width: 100%;
+            background-color: rgba(13,31,90,0.65);
+            position: absolute;
+            z-index: 10;
+            color: white;
+            font-family: 'lato', sans-serif;
+            text-align: center;
+        }
+
+        #next{
+            position: absolute;
+            top: 0;
+            right: 25px;
+            color: white;
+            font-family: 'lato', sans-serif;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+
+
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="../js/three.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/OrbitControls.js"></script>
+    <script src="../js/three.js-master/examples/js/loaders/ColladaLoader.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/DeviceOrientationControls.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/PointerLockControls.js"></script>
+    <script src="../js/three.js-master/examples/js/effects/CardboardEffect.js"></script>
+
+</head>
+<body>
+
+<div id="info">
+    <h2>Zorg voor de nodige aanpassingen wanneer het scherm wordt aangepast in grootte of wanneer het scherm fullscreen gaat.</h2>
+</div>
+
+<div id="container">
+    <div id="menuSelector">
+        <div id="center">
+            <div id="centerPoint"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+var $container, WIDTH, HEIGHT;
+var scene, renderer, camera, effect;
+var light;
+var sphere;
+var scherm;
+var controls;
+var center, centerPoint, raycaster, mouse, INTERSECTED, teller = 60;
+var animateID;
+var element;
+
+init();
+
+function init() {
+
+    if(animateID!=null){
+        cancelAnimationFrame(animateID);
+    }
+
+    $container = $("#container");
+    center = document.getElementById("center");
+    centerPoint = document.getElementById("centerPoint");
+
+    WIDTH = $container.width();
+    HEIGHT = $container.height();
+
+    //opzetten scene, renderer en camera
+    scene = new THREE.Scene();
+
+    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(WIDTH, HEIGHT);
+
+    element = renderer.domElement;
+    $container.append(element);
+
+    effect = new THREE.CardboardEffect( renderer );
+    effect.setSize( WIDTH, HEIGHT );
+
+    var FOV = 65, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
+    camera = new THREE.PerspectiveCamera(FOV, ASPECT, NEAR, FAR);
+    camera.position.set(1, 0, 0);
+    scene.add(camera);
+
+    //lights
+    light = new THREE.PointLight(0xffffff);
+    scene.add(light);
+
+    var ambiLight = new THREE.AmbientLight(0xffffff, 0.2);
+    scene.add(ambiLight);
+
+    prepareOoBee();
+
+    controls = new THREE.DeviceOrientationControls(camera, true);
+
+    mouse = new THREE.Vector2();
+    raycaster = new THREE.Raycaster();
+
+    animate();
+}
+
+function addSphere(name) {
+
+    var radius = 1000;
+    var sphereGeometry = new THREE.SphereGeometry(radius, 32, 32); //sphereGeometry
+
+    var textureLoader = new THREE.TextureLoader();
+
+    textureLoader.load('../img/' + name + '.jpg', function(texture) {
+
+        //var texture = textureLoader.load('img/' + name + '.jpg');
+        var materialParameters = {
+            map: texture
+        };
+        var sphereMaterial = new THREE.MeshBasicMaterial(materialParameters); //sphereMaterial
+
+        sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        sphere.scale.x = -1; //panorama binnenstebuiten keren
+        scene.add(sphere);
+
+        //camera binnenin de bol plaatsen
+        camera.position = sphere.position;
+    });
+}
+
+function addBoard(name, posX, posY, posZ, size) {
+
+    var geometry = new THREE.BoxGeometry(5, 15, size);
+
+    var textureLoader = new THREE.TextureLoader();
+    var texture = textureLoader.load('../img/' + name + '.png');
+
+    var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({map: texture}));
+
+    object.position.set(posX, posY, posZ);
+
+    object.name = name;
+
+    scene.add(object);
+}
+
+function loadCollada(name, posX, posY, posZ, angle, scale) {
+
+    //objecten inladen
+    var loader = new THREE.ColladaLoader();
+    loader.options.convertUpAxis = true;
+
+    loader.load('../img/collada/' + name + '.dae', function (collada) {
+
+        scherm = collada.scene;
+
+        scherm.scale.x = scherm.scale.y = scherm.scale.z = scale;
+        scherm.updateMatrix();
+
+        scherm.position.set(posX, posY, posZ);
+
+        var degrees = angle * (Math.PI / 180);
+        scherm.rotation.set(0, degrees, 0);
+
+        scherm.name = name;
+
+        scene.add(scherm);
+        //animate();
+
+    });
+
+}
+
+function findIntersects() {
+
+    raycaster.setFromCamera(mouse, camera);
+
+    var intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+
+        if (INTERSECTED != intersects[0].object) INTERSECTED = intersects[0].object;
+
+        INTERSECTED.scale.x = INTERSECTED.scale.x + 0.022;
+        //pos = INTERSECTED.position.x;
+        //INTERSECTED.position.x = INTERSECTED.position.x + 1;
+
+        if (teller >= 10) {
+            teller -= 0.3;
+            center.style.width = teller + "px";
+            center.style.height = teller + "px";
+            centerPoint.style.background = "red";
+        }
+        else {
+
+            switch (INTERSECTED.name) {
+                case "Forum":
+                    prepareForum();
+                    break;
+                case "Minor":
+                    prepareMinor();
+                    break;
+                case "OoBee":
+                    prepareOoBee();
+                default:
+            }
+
+            teller = 60;
+        }
+    } else {
+
+        centerPoint.style.background = "red";
+
+        teller = 60;
+        center.style.width = teller + "px";
+        center.style.height = teller + "px";
+
+        if (INTERSECTED != null) {
+            INTERSECTED.scale.x = 1;
+            INTERSECTED = null;
+        }
+    }
+}
+
+function prepareOoBee() {
+
+    scene.remove(scene.getObjectByName( "OoBee" ));
+    scene.remove(scene.getObjectByName( "lessenaar" ));
+    scene.remove(scene.getObjectByName( "paneel" ));
+
+    addSphere("PANO1");
+
+    addBoard("Forum", -250, 30, 20, 35);
+
+}
+
+function prepareForum() {
+
+    //var OoBee = scene.getObjectByName( "OoBee" );
+    scene.remove(scene.getObjectByName( "Forum" ));
+
+    addSphere("PANO2");
+
+    addBoard("OoBee", -250, 40, 0, 35);
+
+    loadCollada("lessenaar", 300, -120, 75, -130, 100);
+    loadCollada("paneel", -230, -140, -200, 0, 75);
+
+}
+
+function prepareMinor() {
+
+    addSphere("PANO3");
+
+}
+
+
+document.addEventListener('mousemove', onDocumentMouseMove, false);
+
+function onDocumentMouseMove(event) {
+
+    event.preventDefault();
+
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
+
+}
+
+function animate() {
+    animateID = requestAnimationFrame(animate);
+    controls.update();
+    findIntersects();
+    effect.render(scene, camera);
+}
+
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize() {
+
+    WIDTH = $container.width();
+    HEIGHT = $container.height();
+
+    camera.aspect = WIDTH / HEIGHT;
+    camera.updateProjectionMatrix();
+
+    effect.setSize(WIDTH, HEIGHT);
+    renderer.render(scene, camera);
+    renderer.setSize(WIDTH, HEIGHT);
+
+    effect.render(scene, camera);
+}
+
+var isFullscreen = false;
+
+function fullscreen(){
+
+    if ( container.requestFullscreen ) {
+        container.requestFullscreen();
+    } else if ( container.msRequestFullscreen ) {
+        container.msRequestFullscreen();
+    } else if ( container.mozRequestFullScreen ) {
+        container.mozRequestFullScreen();
+    } else if ( container.webkitRequestFullscreen ) {
+        container.webkitRequestFullscreen();
+    }
+
+    // herbeginnen!
+
+    $(element).remove();
+    init();
+}
+container.addEventListener('click', fullscreen, false);
+
+
+</script>
+
+</body>
+</html>

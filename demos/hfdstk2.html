@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="../js/btstrp.js"></script>
+    <script src="../js/three.min.js"></script>
+
+    <style>
+        body {
+            margin: 0px;
+            overflow: hidden;
+        }
+        #container{
+            height: 100vh;
+            margin:0;
+            padding:0;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div id="container"></div>
+
+<script>
+    // waarin zullen we de content plaatsen?
+    // pro-tip: zorg er voor dat je container een hoogte heeft, anders zal er niet veel te zien zijn.
+
+    var $container = $('#container');
+    var WIDTH = $container.width(),
+            HEIGHT = $container.height();
+
+    // variabelen
+
+    var scene, camera, renderer, object, light;
+
+    // opzetten van de scene
+
+    scene = new THREE.Scene();
+
+    // eerst onze renderer, we kiezen voor de WebGLRenderer.
+    // waarom niet de SVG- of CanvasRenderer?
+
+    renderer = new THREE.WebGLRenderer();
+
+    // de camera heeft enkele parameters nodig
+
+    var FOV = 45,               // Field Of View, hoe groter de kijkhoek: hoe meer beeld
+            ASPECT = WIDTH/HEIGHT,  // dit is de ratio van onze container
+            NEAR = 0.1,             // het dichtste vlak van het kijk-frustrum
+            FAR = 10000;            // het verste vlak van het kijk-frustrum
+
+    // we kiezen voor de PerspectiveCamera, welke bestaan er nog?
+
+    camera = new THREE.PerspectiveCamera(FOV,ASPECT,NEAR,FAR);
+
+    // camera toevoegen aan de scene
+
+    scene.add(camera);
+
+    // camera positioneren, nieuwe objecten staan standaard op coördinaat 0,0,0
+
+    camera.position.z = 300;
+
+    // grootte instellen, zelfde als onze container.
+
+    renderer.setSize(WIDTH,HEIGHT);
+
+    // resultaat toevoegen aan de domcontent van onze container.
+
+    $container.append(renderer.domElement);
+
+    // renderen!
+
+    renderer.render(scene, camera);
+
+    // object aanmaken
+
+    var radius = 60, segments = 36, rings = 36;
+    var sphereGeometry = new THREE.SphereGeometry(radius,segments,rings);
+
+    var materialParameters = {
+        color:0xffee55,
+        reflectivity: 1
+    };
+
+    var sphereMaterial = new THREE.MeshLambertMaterial(materialParameters);
+
+    object = new THREE.Mesh(sphereGeometry,sphereMaterial);
+
+    scene.add(object);
+
+    // lights!
+
+    light = new THREE.PointLight(0xffffff);
+    light.position.x = 10;
+    light.position.y = 50;
+    light.position.z = 130;
+
+    scene.add(light);
+
+    renderer.render(scene, camera);
+
+    window.addEventListener( 'resize', onWindowResize, false );
+
+
+    function onWindowResize() {
+
+        camera.aspect = $container.width() / $container.height();
+        camera.updateProjectionMatrix();
+        renderer.setSize( $container.width(), $container.height() );
+        renderer.render( scene, camera );
+    }
+</script>
+
+</body>
+</html>

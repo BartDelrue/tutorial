@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+        body {
+            margin: 0px;
+            overflow: hidden;
+        }
+        #container{
+            height: 100vh;
+            width: 100%;
+            margin:0;
+            padding:0;
+            position:relative;
+        }
+
+        #menuSelector{
+            width: 50%;
+            height: 100vh;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #center {
+            background-color: transparent;
+            border: 4px whitesmoke solid;
+            z-index: 100;
+            border-radius: 60px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #centerPoint {
+            background-color: whitesmoke;
+            z-index: 100;
+            border-radius: 10px;
+            width: 10px;
+            height: 10px;
+        }
+
+        #info{
+            height: 4em;
+            width: 100%;
+            background-color: rgba(13,31,90,0.65);
+            position: absolute;
+            z-index: 10;
+            color: white;
+            font-family: 'lato', sans-serif;
+            text-align: center;
+        }
+
+        #next{
+            position: absolute;
+            top: 0;
+            right: 25px;
+            color: white;
+            font-family: 'lato', sans-serif;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+
+
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="../js/three.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/OrbitControls.js"></script>
+    <script src="../js/three.js-master/examples/js/loaders/ColladaLoader.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/DeviceOrientationControls.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/PointerLockControls.js"></script>
+    <script src="../js/three.js-master/examples/js/effects/CardboardEffect.js"></script>
+
+</head>
+<body>
+
+<div id="info">
+    <h2>Voeg een sphere toe waarin je een panorama plaatst.</h2>
+    <a id="next" href="Labo3.html"><h2>Next ></h2></a>
+</div>
+
+<div id="container">
+</div>
+
+<script>
+
+var $container, WIDTH, HEIGHT;
+var scene, renderer, camera, effect;
+var light;
+var sphere;
+
+init();
+
+function init() {
+
+    $container = $("#container");
+
+    WIDTH = $container.width();
+    HEIGHT = $container.height();
+
+    //opzetten scene, renderer en camera
+    scene = new THREE.Scene();
+
+    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(WIDTH, HEIGHT);
+
+    $container.append(renderer.domElement);
+
+    var FOV = 65, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
+    camera = new THREE.PerspectiveCamera(FOV, ASPECT, NEAR, FAR);
+    camera.position.set(1, 0, 0);
+    scene.add(camera);
+
+    //lights
+    light = new THREE.PointLight(0xffffff);
+    scene.add(light);
+
+    var ambiLight = new THREE.AmbientLight(0xffffff, 0.2);
+    scene.add(ambiLight);
+
+    addSphere("PANO2");
+
+}
+
+function addSphere(name) {
+
+    var radius = 1000; //maak de bol groot genoeg zodat je er 'in' kunt
+    var sphereGeometry = new THREE.SphereGeometry(radius, 32, 32); //sphereGeometry
+
+    var textureLoader = new THREE.TextureLoader();
+
+    textureLoader.load('../img/' + name + '.jpg', function(texture) {
+
+        var materialParameters = {
+            map: texture
+        };
+        var sphereMaterial = new THREE.MeshBasicMaterial(materialParameters); //sphereMaterial
+
+        sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        sphere.scale.x = -1; //panorama binnenstebuiten keren
+        scene.add(sphere);
+
+        //camera binnenin de bol plaatsen
+        camera.position = sphere.position;
+
+        //ALTIJD renderen!
+        renderer.render(scene, camera);
+    });
+}
+
+var animate = function(){
+
+    requestAnimationFrame( animate );
+
+    renderer.render(scene, camera);
+};
+
+animate();
+
+
+</script>
+
+</body>
+</html>

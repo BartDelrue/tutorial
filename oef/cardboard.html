@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>three.js webgl</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            margin: 0px;
+            overflow: hidden;
+        }
+        #container{
+            height: 100vh;
+            margin:0;
+            padding:0;
+        }
+    </style>
+    <script src="../js/three.js-master/build/three.min.js"></script>
+    <script src="../js/three.js-master/examples/js/effects/CardboardEffect.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/OrbitControls.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/DeviceOrientationControls.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-2.2.1.min.js"
+            integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="container"></div>
+
+<script>
+
+    // omgeving instellen
+    var $container = $('#container');
+
+    var WIDTH = $container.width(),
+            HEIGHT = $container.height();
+
+    var VIEW_ANGLE = 45,
+            ASPECT = WIDTH/HEIGHT,
+            NEAR = 0.1,
+            FAR = 10000;
+
+    var renderer = new THREE.WebGLRenderer();
+    var camera = new THREE.PerspectiveCamera(VIEW_ANGLE,ASPECT,NEAR,FAR);
+    var scene = new THREE.Scene();
+
+    scene.add(camera);
+    camera.position.z = 300;
+    renderer.setSize(WIDTH,HEIGHT);
+
+    $container.append(renderer.domElement);
+
+    var element = renderer.domElement;
+
+    //obejct aanmaken
+    var radius = 10, segments = 6, rings = 6;
+    var sphereGeometry = new THREE.SphereGeometry(radius,segments,rings);
+
+    var materialParameters = {
+        wireframe: true
+    };
+
+    var sphereMaterial = new THREE.MeshBasicMaterial(materialParameters);
+    var sphere = new THREE.Mesh(sphereGeometry,sphereMaterial);
+    var sphere1 = new THREE.Mesh(sphereGeometry,sphereMaterial);
+    var sphere2 = new THREE.Mesh(sphereGeometry,sphereMaterial);
+    var sphere3 = new THREE.Mesh(sphereGeometry,sphereMaterial);
+
+    scene.add(sphere, sphere1, sphere2, sphere3);
+
+    var t = 0;
+    function render() {
+
+        requestAnimationFrame(render);
+        t += 0.03;
+        r = 0.03;
+
+        sphere.rotation.y += r;
+        sphere.position.x =  10*Math.cos(t) + 0;
+        sphere.position.z =  50*Math.sin(t) + 0;
+        sphere.position.y =  80*Math.cos(t) + 0;
+
+        sphere1.rotation.y += r;
+        sphere1.position.x = 50*Math.cos(t) + 0;
+        sphere1.position.z = 20*Math.sin(t) + 0;
+        sphere1.position.y = 50*Math.cos(t) + 0;
+
+        sphere2.rotation.y += r;
+        sphere2.position.x = 50*Math.cos(t) + 0;
+        sphere2.position.z = 80*Math.cos(t) + 0;
+        sphere2.position.y = 10*Math.sin(t) + 0;
+
+        sphere3.rotation.y += r;
+        sphere3.position.x = 70*Math.cos(t) + 0;
+        sphere3.position.z = 30*Math.cos(t) + 0;
+        sphere3.position.y = 50*Math.sin(t) + 0;
+
+        controls.update();
+
+        effect.render(scene, camera);
+
+    }
+
+    effect = new THREE.CardboardEffect( renderer );
+    effect.setSize( WIDTH, HEIGHT );
+
+    var controls = new THREE.OrbitControls( camera, element );
+    controls.target.set(
+            camera.position.x + 0.1,
+            camera.position.y + 0.1,
+            camera.position.z + 0.1
+    );
+    controls.enableZoom = false;
+    controls.enablePan = false;
+
+    function setOrientationControls(e){
+        if(!e.alpha){
+            return;
+        }
+        controls = new THREE.DeviceOrientationControls(camera, true);
+        controls.connect();
+        controls.update();
+
+        window.removeEventListener('deviceorientation', setOrientationControls, true);
+    }
+    window.addEventListener('deviceorientation', setOrientationControls, true);
+
+    //slot
+    render();
+
+    container.addEventListener('click', fullscreen, false);
+    window.addEventListener( 'resize', onWindowResize, false );
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        effect.setSize( window.innerWidth , window.innerHeight );
+    }
+
+function fullscreen(){
+        if ( container.requestFullscreen ) {
+            container.requestFullscreen();
+        } else if ( container.msRequestFullscreen ) {
+            container.msRequestFullscreen();
+        } else if ( container.mozRequestFullScreen ) {
+            container.mozRequestFullScreen();
+        } else if ( container.webkitRequestFullscreen ) {
+            container.webkitRequestFullscreen();
+        }
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+        body {
+            margin: 0px;
+            overflow: hidden;
+        }
+        #container{
+            height: 100vh;
+            width: 100%;
+            margin:0;
+            padding:0;
+            position:relative;
+        }
+
+        #menuSelector{
+            width: 50%;
+            height: 100vh;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #center {
+            background-color: transparent;
+            border: 4px whitesmoke solid;
+            z-index: 100;
+            border-radius: 60px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #centerPoint {
+            background-color: whitesmoke;
+            z-index: 100;
+            border-radius: 10px;
+            width: 10px;
+            height: 10px;
+        }
+
+        #info{
+            height: 4em;
+            width: 100%;
+            background-color: rgba(13,31,90,0.65);
+            position: absolute;
+            z-index: 10;
+            color: white;
+            font-family: 'lato', sans-serif;
+            text-align: center;
+        }
+
+        #next{
+            position: absolute;
+            top: 0;
+            right: 25px;
+            color: white;
+            font-family: 'lato', sans-serif;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+
+
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="../js/three.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/OrbitControls.js"></script>
+    <script src="../js/three.js-master/examples/js/loaders/ColladaLoader.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/DeviceOrientationControls.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/PointerLockControls.js"></script>
+    <script src="../js/three.js-master/examples/js/effects/CardboardEffect.js"></script>
+
+</head>
+<body>
+
+<div id="info">
+    <h2>Maak een init() functie waarin je scene, camera(s), light(s) en renderer opzet.</h2>
+    <a id="next" href="Labo2.html"><h2>Next ></h2></a>
+</div>
+
+<div id="container">
+</div>
+
+<script>
+
+var $container, WIDTH, HEIGHT;
+var scene, renderer, camera, effect;
+var light;
+
+init();
+
+function init() {
+
+    // waarin zullen we de content plaatsen?
+    // pro-tip: zorg er voor dat je container een hoogte heeft, anders zal er niet veel te zien zijn.
+    $container = $("#container");
+
+    WIDTH = $container.width();
+    HEIGHT = $container.height();
+
+    //opzetten scene, renderer en camera
+    scene = new THREE.Scene();
+
+    renderer = new THREE.WebGLRenderer({antialias: true}); //optimalisatie
+    renderer.setSize(WIDTH, HEIGHT);
+
+    var FOV = 65, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
+    camera = new THREE.PerspectiveCamera(FOV, ASPECT, NEAR, FAR);
+    camera.position.set(1, 0, 0);
+    scene.add(camera);
+
+    //lights
+    light = new THREE.PointLight(0xffffff);
+    scene.add(light);
+
+    var ambiLight = new THREE.AmbientLight(0xffffff, 0.2);
+    scene.add(ambiLight);
+
+    //ALTIJD renderen!
+    renderer.render(scene, camera);
+
+}
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<link href="css/style.css" rel="stylesheet">-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>-->
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <!--<script src="js/btstrp.js"></script>-->
+
+    <!--<script src="./js/three.min.js"></script>-->
+    <!--<script src="./js/three.js-master/examples/js/loaders/ColladaLoader.js"></script>-->
+
+</head>
+<body>
+
+<h1>Cardboard menu</h1>
+<p>In dit onderdeel gaan we de uitdaging aan om wat interactie in te bouwen in onze VR-toepassing. De mogelijkheden om te interageren met Google Cardboard zijn beperkt. Wij focussen (letterlijk ;-) ) op één manier: een actie uitvoeren door gedurende een bepaalde periode te kijken naar een object op de scene.</p>
+<p>Hoe zal het eindresultaat er uit zien, vraag je je af? Er zullen enkele kleurrijke kubussen rondzweven in ons panorama. In het midden van het scherm zal een soort van vizier te zien zijn. Wanneer je met dit vizier focust op een bepaalde kubus, leidt deze je naar een nieuw panorama. We gaan dus virtueel reizen! </p>
+<p>Fasten your seatbelts and get ready for takeoff!! </p>
+
+<h2>Kleurrijke kubussen als menu-items</h2>
+<p>De eerste stap is eigenlijk niets nieuws. We zetten een panorama op en voegen enkele kubussen toe. Een combinatie dus van eerdere oefeningen. </p>
+<p>We doen wel een kleine aanpassing in vergelijking met de voorgaande oefeningen. Gezien we in deze oefening werken met meerdere panorama’s zullen we de code voor het aanmaken hiervan onderbrengen in een functie. Wanneer we deze aanroepen geven we enkele specifieke parameters mee. Hiermee wordt de code herbruikbaar en dus efficiënter.</p>
+<blockquote>
+  <pre>
+    <code>
+        addSphere("05");
+
+        function addSphere(name) {
+
+        var radius = 1000;
+        var sphereGeometry = new THREE.SphereGeometry(radius, 32, 32);
+
+        // ... de rest kennen jullie ongetwijfeld al rats van buiten
+
+        }
+    </code>
+  </pre>
+</blockquote>
+<p>Ook voor de kubussen raden we aan op die manier te werken.</p>
+<blockquote>
+  <pre>
+    <code>
+        function addCube(kleur, posX, posY, posZ, angle, name) {
+
+        var radius = 25;
+        var geometry = new THREE.BoxGeometry( radius, radius, radius );
+
+        // ... ook dit hebben jullie al goed onder de knie
+
+        object.name = name; //belangrijk! Dit hebben we later nog nodig!
+
+        scene.add( object );
+
+        }
+    </code>
+  </pre>
+</blockquote>
+
+<h2>Shoot it</h2>
+<p>Tijd om het vizier op te maken waarmee we zullen richten op de kubussen. Hiervoor laten we voornamelijk CSS het werk doen.</p>
+<p>Eerst en vooral nesten we enkele DIV-tags in onze container. Container > menuSelector > center > centerPoint.</p>
+
+<p>Met volgende CSS code positioneren we de cirkel centraal op ons scherm.</p>
+<blockquote>
+  <pre>
+    <code>
+        #menuSelector{
+        width: 50%; /*!!Google Cardboard deelt je scherm op in twee delen!!*/
+        height: 100vh;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+
+        #center {
+        background-color: transparent;
+        border: 4px whitesmoke solid;
+        z-index: 100;
+        border-radius: 60px;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+
+        #centerPoint {
+        background-color: whitesmoke;
+        z-index: 100;
+        border-radius: 10px;
+        width: 10px;
+        height: 10px;
+        }
+    </code>
+  </pre>
+</blockquote>
+
+<h2>Opvangen focus op kubus </h2>
+<p>In deze stap zit de magie achter onze interactieve kubussen. Met onderstaande code gaan we opvangen wanneer men focust op een kubus. </p>
+<p>Initialiseer de globale variabelen ‘mouse’ en ‘raycaster’ in de init() alvorens je de animate() oproept.</p>
+<p>Hiervoor heb je PointerLockControls.js nodig. Maak meteen ook de globale variabele INTERSECTED aan. Deze hebben we straks nodig. Bekijk zeker eens
+    <a href="https://threejs.org/examples/webgl_interactive_cubes.html">deze oefening</a> die ook gebruik maakt van de raycaster.</p>
+<blockquote>
+  <pre>
+    <code>
+        mouse = new THREE.Vector2();
+        raycaster = new THREE.Raycaster();
+    </code>
+  </pre>
+</blockquote>
+<p>Implementeer volgende listener. In de mouse-variabele sla je eigenlijk op waarnaar je precies aan het kijken bent. </p>
+<blockquote>
+  <pre>
+    <code>
+        document.addEventListener('mousemove', onDocumentMouseMove, false);
+
+        function onDocumentMouseMove(event) {
+
+        event.preventDefault();
+
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
+
+        }
+    </code>
+  </pre>
+</blockquote>
+<p>Schrijf de functie findIntersects(). Deze roepen we op in de animate().</p>
+<blockquote>
+  <pre>
+    <code>
+        function findIntersects() {
+
+        //dit zal het snijpunt bepalen tussen een kubus en de richting naar waar je kijkt
+        raycaster.setFromCamera(mouse, camera);
+
+        //alle objecten die kruisen met je kijkrichting
+        var intersects = raycaster.intersectObjects(scene.children);
+
+        if (intersects.length > 0) {
+
+        centerPoint.style.backgroundColor = "green"; //visuele weergave om aan te geven dat je aan het focussen bent op een menu-item
+
+        if (INTERSECTED != intersects[0].object) INTERSECTED = intersects[0].object;
+
+        } else {
+
+        centerPoint.style.backgroundColor = "red";
+
+        INTERSECTED = null;
+        }
+        }
+    </code>
+  </pre>
+</blockquote>
+<p>Ziezo, nu hebben we het moeilijkste van dit onderdeel gehad. We gaan nu enkel nog wat afwerken.</p>
+<p>We controleren welke kubus precies in de variabele INTERSECTED zit om te bepalen naar waar we zullen “vliegen”. Plaats dit op je juiste plaats in je code. Moet wel lukken, niet?</p>
+<blockquote>
+  <pre>
+    <code>
+        switch (INTERSECTED.name) {
+        case "yellow":
+        addSphere("01"); //deze functie schreven we al eerder
+        break;
+        case "red":
+        addSphere("02");
+        break;
+        case "green":
+        addSphere("03");
+        break;
+        case "blue":
+        addSphere("04");
+        break;
+        default:
+        }
+    </code>
+  </pre>
+</blockquote>
+
+<h2>De laatste loodjes</h2>
+<p>Denk zelf eens na hoe je ervoor kan zorgen dat je vizier kleiner wordt wanneer je focust op een kubus. TIP: doe wat extra CSS-aanpassingen in de findIntersects() methode. </p>
+<p>Zorg er ook voor dat je pas overgaat naar het volgende panorama als je lang genoeg focust op een kubus. TIP: controleer op de grootte van je vizier. We hielden dit bij in een teller. Vergeet deze niet te herstellen als je niet meer op een kubus focust.</p>
+<p>Voeg het CardboarEffect toe zoals gezien in de voorgaande stap. Doe ook nodige aanpassingen in de animate() functie. </p>
+<p>Voeg de fullscreen- en onWindowResize listeners toe. Wederom: zie voorgaande oefening.</p>
+<p>Integreer enkel de DeviceOrientationControls. De OrbitControls laat je hier best achterwege!</p>
+<p>Belangrijk! Voeg onderaan de fullscreen() methode volgende code toe. De init() moet opnieuw worden aangeroepen omdat het snijpunt licht afwijkt van de kijkrichting en dit is zeer vervelend!</p>
+<blockquote>
+  <pre>
+    <code>
+        $(element).remove(); //dit verwijdert ons canvas
+        init();
+    </code>
+  </pre>
+</blockquote>
+<p>Geef tenslotte het requestAnimationFrame een animateID. In het begin van de init() controleer je hierop. Dit is ter optimalisatie van de code!</p>
+<blockquote>
+  <pre>
+    <code>
+        if(animateID!=null){
+        cancelAnimationFrame(animateID);
+        }
+    </code>
+  </pre>
+</blockquote>
+<p>Gelukt!? Puik werk! Dit was zeker geen eenvoudige oefening. Maar nu ben je helemaal klaar voor de samenvattende oefening!!</p>
+
+
+
+<a href="demos/hfdstk9.html" target="_blank">
+<div id="container" style="height: 400px; width: 100%; border-radius: 5px; border:5px solid black;
+    background-image: url('./img/hfdstk9.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: black;"></div></a>
+
+<h3>Bronnen</h3>
+<span class="citation">WebGL interactive cubes. (z.d.). Geraadpleegd 23 april 2016, van <a href="https://threejs.org/examples/webgl_interactive_cubes.html" target="_blank">https://threejs.org/examples/webgl_interactive_cubes.html</a></span>
+
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="../js/three.min.js"></script>
+    <script src="../js/three.js-master/examples/js/controls/OrbitControls.js"></script>
+
+
+    <style>
+        body {
+            margin: 0px;
+            overflow: hidden;
+        }
+        #container{
+            height: 100vh;
+            margin:0;
+            padding:0;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div id="container"></div>
+<script>
+
+
+    // omgeving instellen
+    var $container = $('#container');
+
+    var WIDTH = $container.width(),
+            HEIGHT = $container.height();
+
+    var renderer = new THREE.WebGLRenderer();
+
+    var camera = new THREE.PerspectiveCamera(65,(WIDTH/HEIGHT),0.1,10000);
+
+    var scene = new THREE.Scene();
+
+    scene.add(camera);
+    camera.position.z = 300;
+    renderer.setSize(WIDTH,HEIGHT);
+
+    $container.append(renderer.domElement);
+
+    var loader = new THREE.TextureLoader();
+
+    loader.load( '../img/panoramas/forum_2.jpg', function ( texture ) {
+
+                var panorama = new THREE.Mesh(
+                        new THREE.SphereGeometry(1000,32,32),
+                        new THREE.MeshBasicMaterial({map: texture}));
+
+                //panorama bol binnenstebuiten keren
+
+                panorama.scale.x = -1;
+                scene.add(panorama);
+
+                //camera binnenin de bol plaatsen
+
+                camera.position = panorama.position;
+
+                renderer.render(scene, camera);
+            }
+    );
+
+    var controls = new THREE.OrbitControls( camera );
+    controls.enableZoom = false;
+
+    var animate = function(){
+
+        id  = requestAnimationFrame( animate );
+
+        // udpate van de controls
+
+        controls.update();
+
+        // nooit vergeten renderen!
+
+        renderer.render(scene, camera);
+    };
+
+    // functie oproepen
+
+    animate();
+
+    window.addEventListener( 'resize', onWindowResize, false );
+
+    function onWindowResize() {
+        camera.aspect = $container.width() / $container.height();
+        camera.updateProjectionMatrix();
+        renderer.setSize( $container.width(), $container.height() );
+        renderer.render( scene, camera );
+    }
+</script>
+</body>
+</html>

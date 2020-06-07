@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<link href="css/style.css" rel="stylesheet">-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>-->
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <!--<script src="js/btstrp.js"></script>-->
+
+    <!--<script src="./js/three.min.js"></script>-->
+    <!--<script src="./js/three.js-master/examples/js/controls/OrbitControls.js"></script>-->
+
+</head>
+<body>
+<h1>equirectangular panorama met mouse control</h1>
+<p>Er bestaan twee manieren om panoramas te genereren: cubemap of equirectangular. <br>
+    Een equirectangular panorama gebruikt een afbeelding, gewrapped rond een sphere object. Cubemapping daarentegen plaatst zes afbeeldingen op een kubus, wie de vorige oefening
+    tot een goed einde heeft gebracht zal al snel begrijpen hoe de cubemap variant in zijn werk gaat.</p>
+<p>
+    Gezien veruit de meeste smartphones in staat zijn om equirectangular panoramafoto's te genereren kiezen  we voor deze versie.<br>
+    Voor wie wil experimenteren met cubemap kunnen we volgende conversietool aanraden: <a href="https://ggnome.com/pano2qtvr" target="_blank">Pano2QTVR</a> van garden gnome software.<br>
+</p>
+
+<p><b>Opgelet!</b> Ditmaal gebruiken voor het eerst een extra three.js file: OrbitControls.js, refereer naar dit script in jouw pagina.</p>
+
+<h2>Herhaling</h2>
+<p>Dit kennen we al!</p>
+
+<blockquote>
+  <pre>
+    <code>
+        // omgeving instellen
+        var $container = $('#container');
+
+        var WIDTH = $container.width(),
+            HEIGHT = $container.height();
+
+        var renderer = new THREE.WebGLRenderer({ antialias: true }); // een kleine aanpassing
+                                                                     // voor de aandachtige lezer ;)
+        var camera = new THREE.PerspectiveCamera(65,WIDTH/HEIGHT,0.1,10000);
+
+        var scene = new THREE.Scene();
+
+        scene.add(camera);
+        camera.position.z = 300;
+        renderer.setSize(WIDTH,HEIGHT);
+
+        $container.append(renderer.domElement);
+
+        //lights
+        var pointLight = new THREE.PointLight(0xffffff);
+        pointLight.position.x = 20;
+        pointLight.position.y = 20;
+        pointLight.position.z = 180;
+        scene.add(pointLight);
+
+        var ambiLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambiLight);
+        </code></pre></blockquote>
+<h2>Panorama</h2>
+<p>
+    Simpel gezegd: een equirectangular afbeelding is de oppervlakte van een bol, geprojecteerd op naar een plat vlak.<br>
+    Voor een meer gedetailleerde uitleg verwijzen we u graag naar: <a href="https://wiki.panotools.org/Equirectangular" target="_blank">https://wiki.panotools.org/Equirectangular</a>.
+</p>
+<p>
+    We zullen opnieuw de textureLoader gebruiken om onze afbeelding op een bol te projecteren.<br>
+    Bij MeshBasicMaterial hebben we geen lichten nodig. Dit zou toch maar een vreemd effect hebben op onze panorama afbeelding.
+</p>
+<blockquote>
+  <pre>
+    <code>
+        var loader = new THREE.TextureLoader();
+
+        loader.load( 'PANO.jpg', function ( texture ) {
+
+            var panorama = new THREE.Mesh(
+                new THREE.SphereGeometry(100,32,32),
+                new THREE.MeshBasicMaterial({map: texture}));
+
+            scene.add(panorama);
+
+            renderer.render(scene, camera);
+            }
+        );
+        </code>
+      </pre>
+    </blockquote>
+
+<div id="container1" style="height: 400px; width: 100%; border-radius: 5px; border:5px solid black; margin-bottom: 50px;
+
+    background-image: url('./img/hfdstk5_1.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: black;"></div>
+
+<p>Leuk resultaat... maar nog niet wat we zoeken.</p>
+<p>We keren de bol binnenstebuiten en plaatsen onze camera in het midden.<br>
+Indien nodig maken we de bol ook wat groter.</p>
+<blockquote>
+  <pre>
+    <code>
+        var loader = new THREE.TextureLoader();
+
+        loader.load( 'PANO.jpg', function ( texture ) {
+
+            var panorama = new THREE.Mesh(
+
+                //maak de bol groot genoeg zodat je er 'in' kunt  
+                new THREE.SphereGeometry(1000,32,32),
+                new THREE.MeshBasicMaterial({map: texture}));
+
+            //panorama bol binnenstebuiten keren
+
+            panorama.scale.x = -1;
+            scene.add(panorama);
+
+            //camera binnenin de bol plaatsen
+
+            camera.position = panorama.position;
+
+            renderer.render(scene, camera);
+            }
+        );
+    </code>
+      </pre>
+</blockquote>
+<div id="container2" style="height: 400px; width: 100%; border-radius: 5px; border:5px solid black;
+    background-image: url('./img/hfdstk5_2.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: black;"></div>
+
+<h2>OrbitControls</h2>
+<p>Herinner je je nog die extra file die je moest importeren? <br>
+Wel... we maken een nieuw object van de orbitControls klasse en geven de camera mee als parameter.</p>
+<p>
+    Tot slot moeten we wijzigingen nog opvangen en renderen, de animate() functie kwam misschien al van pas in de vorige oefening.<br>
+    In elk geval, vanaf nu zal je deze vaak nodig hebben!
+</p>
+<blockquote>
+  <pre>
+    <code>
+        var controls = new THREE.OrbitControls( camera );
+        controls.enableZoom = false; // hoeft niet, zo kan de gebruiker niet uit de bol 'ontsnappen'
+
+        var animate = function(){
+
+            window.requestAnimationFrame( animate );
+
+            // udpate van de controls
+
+            controls.update();
+
+            // nooit vergeten renderen!
+
+            renderer.render(scene, camera);
+        };
+
+        // functie oproepen
+
+        animate();
+        </code>
+      </pre>
+    </blockquote>
+
+<p>... that's it!<br>
+Als het voordien nog niet duidelijk was: three.js is ronduit fantastisch!</p>
+<a href="demos/hfdstk5.html" target="_blank">
+<div id="container" style="height: 400px; width: 100%; border-radius: 5px; border:5px solid black;
+    background-image: url('./img/hfdstk5_2.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: black;"></div></a>
+
+</body>
+</html>

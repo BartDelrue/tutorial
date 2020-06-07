@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>three.js webgl</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body{
+            margin: 0;
+            padding:0;
+            font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif;
+        }
+    </style>
+    <script src="../js/three.js-master/build/three.min.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-2.2.1.min.js"
+            integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+            crossorigin="anonymous"></script>
+    <script src="../js/three.js-master/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+
+
+<script>
+
+    // omgeving instellen
+    var $container = $('#container');
+
+    var WIDTH = $(window).width(),
+            HEIGHT = $(window).height();
+
+    var VIEW_ANGLE = 65,
+            ASPECT = WIDTH/HEIGHT,
+            NEAR = 0.1,
+            FAR = 10000;
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    var camera = new THREE.PerspectiveCamera(VIEW_ANGLE,ASPECT,NEAR,FAR);
+    var scene = new THREE.Scene();
+
+    scene.add(camera);
+    camera.position.z = 300;
+    renderer.setSize(WIDTH,HEIGHT);
+
+    //controls = new THREE.DeviceOrientationControls( camera );
+
+    var controls = new THREE.OrbitControls( camera );
+    //controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
+    //controls.enableDamping = true;
+    //controls.dampingFactor = 0.25;
+    //controls.enableZoom = false;
+
+    $container.append(renderer.domElement);
+
+    //obejct aanmaken
+        var sphere;
+        var radius = 60, segments = 36, rings = 36;
+        var sphereGeometry = new THREE.SphereGeometry(radius,segments,rings);
+
+    var loader = new THREE.TextureLoader();
+    loader.load(
+            'PANO.jpg',
+            function ( texture ) {
+                var panorama = new THREE.Mesh(new THREE.SphereGeometry(1000,32,32), new THREE.MeshBasicMaterial({map: texture}));
+
+                //panorama bol binnenstebuiten keren
+                panorama.scale.x = -1;
+                panorama.position = camera.position;
+
+                scene.add(panorama);
+
+                var MeshPhongMaterial = new THREE.MeshLambertMaterial( {map: texture} );
+                sphere = new THREE.Mesh( sphereGeometry, MeshPhongMaterial );
+
+                scene.add( sphere );
+
+                renderer.render(scene, camera);
+            }
+    );
+
+    //lights
+    var pointLight = new THREE.PointLight(0xffffff);
+    pointLight.position.x = 20;
+    pointLight.position.y = 20;
+    pointLight.position.z = 180;
+    scene.add(pointLight);
+
+    var ambiLight = new THREE.AmbientLight(0xffffff, 0.3);
+    scene.add(ambiLight);
+
+    //slot
+    renderer.render(scene, camera);
+
+    var animate = function(){
+
+        window.requestAnimationFrame( animate );
+
+        controls.update();
+        renderer.render(scene, camera);};
+
+    animate();
+
+</script>
+
+
+</body>
+</html>

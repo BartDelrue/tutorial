@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<link href="css/style.css" rel="stylesheet">-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>-->
+    <!--<link href='https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>-->
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <!--<script src="js/btstrp.js"></script>-->
+
+    <!--<script src="js/three.min.js"></script>-->
+
+</head>
+<body>
+<h1>Textures</h1>
+
+<p>
+    In dit korte onderdeel over textures beperken we ons tot de absolute basis. De aangeleerde techniek zullen we later opnieuw nodig hebben wanneer we panorama's renderen.<br>
+    Voor een bijzonder knappe tutorial over textures verwijzen we u graag naar: <a href="https://learningthreejs.com/blog/2013/09/16/how-to-make-the-earth-in-webgl/" target="_blank">https://learningthreejs.com/blog/2013/09/16/how-to-make-the-earth-in-webgl/</a>
+</p>
+
+<h2>Wat herhaling</h2>
+<p>
+We zullen de texture enkel toepassen op ons object, dus het opzetten van de scene blijft gelijk. <br>
+Je kan zelf wat spelen met de verschillende parameters.<br>
+Zoek een structuur waarbij jij je confortabel voelt, dit zal je nog vaak herhalen.</p>
+
+<blockquote>
+  <pre>
+    <code>
+
+        // zorg voor een container div (of gebruik de volledige body)
+
+        var $container = $('#container');
+        var WIDTH = $container.width(),
+        HEIGHT = $container.height();
+
+        // variabelen
+
+        var scene, camera, renderer, light;
+
+        var FOV = 45,
+            ASPECT = WIDTH/HEIGHT,
+            NEAR = 0.1,
+            FAR = 10000;
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(FOV,ASPECT,NEAR,FAR);
+        scene.add(camera);
+        camera.position.z = 300;
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(WIDTH,HEIGHT);
+
+        $container.append(renderer.domElement);
+
+        // licht
+
+        light = new THREE.PointLight(0xffffff);
+        light.position.x = 10;
+        light.position.y = 50;
+        light.position.z = 130;
+
+        scene.add(light);
+
+    </code>
+  </pre>
+</blockquote>
+<h2>TextureLoader</h2>
+<p>Het is niet nodig om extra .js files te importeren. De TextureLoader zit vervat in de basis file.</p>
+<p>De belangrijkste aanpassing in onze werkwijze is dat we het object maar weergeven van zodra de texture geladen is.</p>
+
+<blockquote>
+  <pre>
+    <code>
+
+        //object variabelen
+
+        var sphere;
+        var radius = 60, segments = 36, rings = 36; // het aantal segments en rings hebben invloed op de kwaliteit,
+                                                    // maar ook op de snelheid!
+        var sphereGeometry = new THREE.SphereGeometry(radius,segments,rings);
+
+        // NIEUW! TextureLoader()
+
+        var loader = new THREE.TextureLoader();
+
+        // we spreken de .load functie aan en bepalen een callback functie waarin we ons object aanmaken
+        // bij een bol gebruik je bij voorkeur een equirectangular image
+
+        loader.load('./js/three.js-master/examples/textures/land_ocean_ice_cloud_2048.jpg',
+            function ( texture ) {
+
+                // weet je nog welke andere materials beschibaar zijn?
+                // let goed op de parameters, we moeten de texture meegeven
+
+                var MeshPhongMaterial = new THREE.MeshPhongMaterial( {map: texture} );
+
+                sphere = new THREE.Mesh( sphereGeometry, MeshPhongMaterial );
+                sphere.position.x = 0;
+                sphere.position.y = 10;
+                sphere.position.z = 10;
+
+                scene.add( sphere );
+
+                // laatste stap: renderen!
+
+                renderer.render(scene, camera);
+            }
+        );
+
+        </code>
+      </pre>
+    </blockquote>
+
+<h2>Wow!</h2>
+
+<a href="demos/hfdstk3.html" target="_blank">
+<div id="container" style="height: 400px; width: 100%; border-radius: 5px; border:5px solid black;
+    background-image: url('./img/hfdstk3.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: black;"></div></a>
+
+
+
+</body>
+</html>
